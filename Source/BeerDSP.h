@@ -13,6 +13,16 @@ public:
     void process(juce::AudioBuffer<float>& buffer);
     void reset();
 
+    // Setters
+    void setCrush  (float crush)  { crushAmount.store(crush); }
+    void setDrive  (float drive)  { driveAmount.store(drive); }
+    void setFoam   (float foam)   { foamAmount.store(foam); }
+    void setWetDry (float wet)    { wetDry.store(wet); }
+
+    // Getters for GUI Metering
+    float getOutputLevel() const   { return outputLevel.load(); }
+    float getClipIndicator() const { return clipIndicator.load(); }
+
     // Parameters (0.0 - 1.0 normalized)
     std::atomic<float> crushAmount  { 0.0f }; // Bitcrusher intensity
     std::atomic<float> driveAmount  { 0.0f }; // Saturation/Drive
