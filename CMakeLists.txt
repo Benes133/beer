@@ -29,6 +29,8 @@ juce_add_plugin(BeerCrusher
     COPY_PLUGIN_AFTER_BUILD FALSE
 )
 
+juce_generate_juce_header(BeerCrusher)
+
 target_sources(BeerCrusher PRIVATE
     Source/PluginProcessor.cpp
     Source/PluginEditor.cpp
