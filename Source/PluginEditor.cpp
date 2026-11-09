@@ -17,14 +17,14 @@ static void configureSlider (juce::Slider& slider, KnobLookAndFeel& laf)
 static void configureHeaderLabel (juce::Label& label, const juce::String& text)
 {
     label.setText (text, juce::dontSendNotification);
-    label.setFont (juce::Font ("Segoe UI", 11.0f, juce::Font::bold));
+    label.setFont (juce::Font (11.0f, juce::Font::bold));
     label.setColour (juce::Label::textColourId, juce::Colour (0xffFFAA00));
     label.setJustificationType (juce::Justification::centred);
 }
 
 static void configureValueLabel (juce::Label& label)
 {
-    label.setFont (juce::Font ("Consolas", 10.5f, juce::Font::plain));
+    label.setFont (juce::Font (10.5f, juce::Font::plain));
     label.setColour (juce::Label::textColourId, juce::Colour (0x99FFFFFF));
     label.setJustificationType (juce::Justification::centred);
 }
@@ -131,12 +131,12 @@ void BeerCrusherAudioProcessorEditor::paint (juce::Graphics& g)
 
     // Title: BEERCRUSHER (Atoms / Teenage Engineering style)
     g.setColour (juce::Colour (0xffF0F2F5));
-    g.setFont (juce::Font ("Segoe UI", 18.0f, juce::Font::bold));
+    g.setFont (juce::Font (18.0f, juce::Font::bold));
     g.drawText ("BEERCRUSHER", 24, 14, 180, 24, juce::Justification::left, false);
 
     // Subtitle / Module tag
     g.setColour (juce::Colour (0xffFF6A00));
-    g.setFont (juce::Font ("Consolas", 10.0f, juce::Font::bold));
+    g.setFont (juce::Font (10.0f, juce::Font::bold));
     g.drawText ("// ATOMIC SATURATOR & BREW DSP", 170, 20, 220, 16, juce::Justification::left, false);
 
     // Status Chip (Right side of header)
@@ -155,7 +155,7 @@ void BeerCrusherAudioProcessorEditor::paint (juce::Graphics& g)
     g.fillEllipse (chipRect.getX() + 10.0f, chipRect.getY() + 8.0f, 8.0f, 8.0f);
 
     g.setColour (juce::Colour (0xccFFFFFF));
-    g.setFont (juce::Font ("Consolas", 10.0f, juce::Font::plain));
+    g.setFont (juce::Font (10.0f, juce::Font::plain));
     g.drawText ("DSP 64-BIT // OK", chipRect.getX() + 24.0f, chipRect.getY(), 114.0f, 24.0f,
                 juce::Justification::centredLeft, false);
 
