@@ -93,7 +93,7 @@ BeerCrusherAudioProcessorEditor::~BeerCrusherAudioProcessorEditor()
 //==============================================================================
 void BeerCrusherAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    const auto bounds = getLocalBounds().toFloat();
+    auto bounds = getLocalBounds().toFloat();
 
     // 1. Solid industrial chassis base (#121316 dark obsidian)
     g.fillAll (juce::Colour (0xff121418));
@@ -156,7 +156,7 @@ void BeerCrusherAudioProcessorEditor::paint (juce::Graphics& g)
 
     g.setColour (juce::Colour (0xccFFFFFF));
     g.setFont (juce::Font (10.0f, juce::Font::plain));
-    g.drawText ("DSP 64-BIT // OK", chipRect.getX() + 24.0f, chipRect.getY(), 114.0f, 24.0f,
+    g.drawText ("DSP 64-BIT // OK", static_cast<int>(chipRect.getX() + 24.0f), static_cast<int>(chipRect.getY()), 114, 24,
                 juce::Justification::centredLeft, false);
 
     // 4. Outer Chassis Bevel Border
