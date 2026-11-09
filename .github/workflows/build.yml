@@ -21,23 +21,7 @@ jobs:
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path "artifacts" | Out-Null
-          $proc = Start-Process -FilePath "cmake" -ArgumentList "--build build --config Release" -NoNewWindow -Wait -PassThru -RedirectStandardOutput "artifacts/build_output.txt" -RedirectStandardError "artifacts/build_error.txt"
-          
-          if ($proc.ExitCode -ne 0) {
-            "## ❌ MSVC Build Error Details" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-            "```text" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-            if (Test-Path "artifacts/build_error.txt") {
-              Get-Content "artifacts/build_error.txt" -Tail 80 | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-            }
-            if (Test-Path "artifacts/build_output.txt") {
-              Get-Content "artifacts/build_output.txt" -Tail 120 | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-            }
-            "```" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-            exit $proc.ExitCode
-          }
+        run: cmake --build build --config Release --parallel
 
       - name: Locate and pack artifacts
         shell: pwsh
