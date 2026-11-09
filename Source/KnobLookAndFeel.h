@@ -27,7 +27,7 @@ public:
                            float sliderPos,
                            float minSliderPos,
                            float maxSliderPos,
-                           juce::Slider::SliderStyle,
+                           const juce::Slider::SliderStyle,
                            juce::Slider&) override;
 
     void drawLabel (juce::Graphics&, juce::Label&) override;

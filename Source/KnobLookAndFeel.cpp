@@ -119,7 +119,7 @@ void KnobLookAndFeel::drawLinearSlider (juce::Graphics& g,
                                         float sliderPos,
                                         float minSliderPos,
                                         float maxSliderPos,
-                                        juce::Slider::SliderStyle /*style*/,
+                                        const juce::Slider::SliderStyle /*style*/,
                                         juce::Slider& slider)
 {
     // High-end recessed groove slider (Teenage Engineering style)

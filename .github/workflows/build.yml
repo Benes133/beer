@@ -21,7 +21,7 @@ jobs:
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
-        run: cmake --build build --config Release --parallel
+        run: cmake --build build --config Release --parallel -- /m /v:minimal
 
       - name: Locate and pack artifacts
         shell: pwsh

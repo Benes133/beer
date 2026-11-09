@@ -1,6 +1,9 @@
 #pragma once
 #include <JuceHeader.h>
 #include "BubbleParticle.h"
+#include <cmath>
+#include <algorithm>
+#include <vector>
 
 //==============================================================================
 /**
