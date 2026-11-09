@@ -20,20 +20,31 @@ jobs:
       - name: Configure CMake
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
-      - name: Build
-        run: cmake --build build --config Release --parallel -- /m /v:minimal
+      - name: Build with detailed logging
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "artifacts" | Out-Null
+          $process = Start-Process -FilePath "cmake" -ArgumentList "--build build --config Release" -NoNewWindow -Wait -PassThru -RedirectStandardOutput "artifacts/build_output.txt" -RedirectStandardError "artifacts/build_error.txt"
+          
+          Write-Host "=== BUILD ERROR LOG (LAST 80 LINES) ==="
+          if (Test-Path "artifacts/build_error.txt") {
+            Get-Content "artifacts/build_error.txt" -Tail 80
+          }
+          
+          Write-Host "=== BUILD OUTPUT LOG (LAST 80 LINES) ==="
+          if (Test-Path "artifacts/build_output.txt") {
+            Get-Content "artifacts/build_output.txt" -Tail 80
+          }
+          
+          if ($process.ExitCode -ne 0) {
+            Write-Error "Build failed with exit code $($process.ExitCode)"
+            exit $process.ExitCode
+          }
 
       - name: Locate and pack artifacts
         shell: pwsh
         run: |
           Write-Host "Searching for built plugin binaries..."
-          Get-ChildItem -Path "build" -Recurse | Where-Object { $_.Name -like "*BeerCrusher*" } | ForEach-Object {
-            Write-Host "$($_.FullName)"
-          }
-
-          New-Item -ItemType Directory -Force -Path "artifacts" | Out-Null
-          
-          # Find VST3 directory or file
           $vst3Target = Get-ChildItem -Path "build" -Recurse | Where-Object { $_.Name -like "*.vst3" } | Select-Object -First 1
 
           if ($vst3Target) {
@@ -43,12 +54,10 @@ jobs:
             } else {
               Copy-Item -Path $vst3Target.FullName -Destination "artifacts\" -Force
             }
-          } else {
-            Write-Warning "VST3 folder not found by extension, looking for Standalone or dlls..."
-            Get-ChildItem -Path "build" -Recurse -Filter "*BeerCrusher*.exe" | Copy-Item -Destination "artifacts\"
           }
 
-      - name: Upload VST3 artifact
+      - name: Upload Build Artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: BeerCrusher-VST3-Windows
