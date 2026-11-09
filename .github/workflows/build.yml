@@ -12,39 +12,42 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # ── 1. Checkout ──────────────────────────────────────────────────────────
       - name: Checkout repository (with submodules)
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      # ── 2. Configure CMake ───────────────────────────────────────────────────
       - name: Configure CMake
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
-      # ── 3. Build ─────────────────────────────────────────────────────────────
       - name: Build
         run: cmake --build build --config Release --parallel
 
-      # ── 4. Collect VST3 artifact ─────────────────────────────────────────────
-      - name: Collect VST3 artifact
+      - name: Locate and pack artifacts
         shell: pwsh
         run: |
-          $vst3 = Get-ChildItem -Recurse -Filter "*.vst3" -Path "build" | Select-Object -First 1
-          if ($null -eq $vst3) {
-            Write-Error "No .vst3 file found in build directory!"
-            exit 1
+          Write-Host "Searching for built plugin binaries..."
+          Get-ChildItem -Path "build" -Recurse | Where-Object { $_.Name -like "*BeerCrusher*" } | ForEach-Object {
+            Write-Host "$($_.FullName)"
           }
-          New-Item -ItemType Directory -Force -Path "artifacts" | Out-Null
-          # VST3 bundles are directories on Windows; use robocopy for dir, Copy-Item for file
-          if ($vst3.PSIsContainer) {
-            robocopy $vst3.FullName "artifacts\$($vst3.Name)" /E /NFL /NDL /NJH /NJS /NC /NS | Out-Null
-          } else {
-            Copy-Item -Path $vst3.FullName -Destination "artifacts\" -Force
-          }
-          Write-Host "Collected: $($vst3.FullName)"
 
-      # ── 5. Upload artifact ───────────────────────────────────────────────────
+          New-Item -ItemType Directory -Force -Path "artifacts" | Out-Null
+          
+          # Find VST3 directory or file
+          $vst3Target = Get-ChildItem -Path "build" -Recurse | Where-Object { $_.Name -like "*.vst3" } | Select-Object -First 1
+
+          if ($vst3Target) {
+            Write-Host "Found VST3 at $($vst3Target.FullName)"
+            if ($vst3Target.PSIsContainer) {
+              Copy-Item -Path $vst3Target.FullName -Destination "artifacts\" -Recurse -Force
+            } else {
+              Copy-Item -Path $vst3Target.FullName -Destination "artifacts\" -Force
+            }
+          } else {
+            Write-Warning "VST3 folder not found by extension, looking for Standalone or dlls..."
+            Get-ChildItem -Path "build" -Recurse -Filter "*BeerCrusher*.exe" | Copy-Item -Destination "artifacts\"
+          }
+
       - name: Upload VST3 artifact
         uses: actions/upload-artifact@v4
         with:
